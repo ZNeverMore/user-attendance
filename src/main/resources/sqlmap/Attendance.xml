@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.bester.attendance.dao.AttendanceDAO">
+    <resultMap id="attendanceEntity" type="com.bester.attendance.entity.Attendance">
+    </resultMap>
+
+
+    <select id="findMonthAttendanceByUserId" resultMap="attendanceEntity">
+        SELECT u.userId, u.addTime, u.id
+        FROM (SELECT a.userId, a.addTime, a.id
+              FROM user_attendance a
+              GROUP BY a.userId, a.addTime, a.id
+             ) u
+        WHERE u.userId = #{userId}
+        GROUP BY u.addTime, u.id
+    </select>
+
+
+</mapper>
