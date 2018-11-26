@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface AttendanceDAO {
 
-    List<Attendance> findMonthAttendanceByUserId(@Param("userId") Integer userId);
+    List<Attendance> findAttendanceByUserId(@Param("userId") Integer userId);
 
 }

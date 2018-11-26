@@ -12,3 +12,9 @@ spring:
 mybatis:
   mapper-locations: classpath:sqlmap/*.xml
   type-aliases-package: com.bester.attendance.entity
+
+logging:
+  level:
+    com:
+      bester:
+        attendance: DEBUG

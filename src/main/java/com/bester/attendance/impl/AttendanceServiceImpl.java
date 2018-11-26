@@ -15,7 +15,7 @@ public class AttendanceServiceImpl implements AttendanceService {
     private AttendanceDAO attendanceDAO;
 
     @Override
-    public List<Attendance> findMonthAttendanceByUserId(Integer userId) {
-        return attendanceDAO.findMonthAttendanceByUserId(userId);
+    public List<Attendance> findAttendanceByUserId(Integer userId) {
+        return attendanceDAO.findAttendanceByUserId(userId);
     }
 }

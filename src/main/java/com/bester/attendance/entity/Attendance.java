@@ -16,4 +16,6 @@ public class Attendance {
 
     private Date addTime;
 
+    private String days;
+
 }

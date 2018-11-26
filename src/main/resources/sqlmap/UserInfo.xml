@@ -13,7 +13,7 @@
     <select id="getUserNameById" resultType="string">
         SELECT userName
         FROM userinfo_attendance
-        WHERE userId = {userId}
+        WHERE userId = #{userId}
     </select>
 
 </mapper>

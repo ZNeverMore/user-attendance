@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface AttendanceService {
 
-    List<Attendance> findMonthAttendanceByUserId(Integer userId);
+    List<Attendance> findAttendanceByUserId(Integer userId);
 
 }
