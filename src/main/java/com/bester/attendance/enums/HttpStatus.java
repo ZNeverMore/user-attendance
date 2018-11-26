@@ -1,5 +1,9 @@
 package com.bester.attendance.enums;
 
+/**
+ * @author zhangqiang
+ */
+
 public enum HttpStatus {
 
     /**

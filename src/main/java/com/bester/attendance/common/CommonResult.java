@@ -3,6 +3,9 @@ package com.bester.attendance.common;
 import com.bester.attendance.enums.HttpStatus;
 import lombok.Getter;
 
+/**
+ * @author zhangqiang
+ */
 public class CommonResult<Content> {
 
     /**
