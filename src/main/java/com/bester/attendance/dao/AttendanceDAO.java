@@ -18,6 +18,6 @@ public interface AttendanceDAO {
      * @param end 结束时间
      * @return
      */
-    List<Attendance> findAttendanceByUserId(@Param("userId") Integer userId, @Param("start") String start, @Param("end") String end);
+    List<Attendance> findAttendanceByUserId(@Param("id") Integer userId, @Param("start") String start, @Param("end") String end);
 
 }

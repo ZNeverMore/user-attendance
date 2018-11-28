@@ -54,15 +54,15 @@ public class UserAttendanceController {
         } catch (ParseException e) {
             LOGGER.error("时间格式错误");
         }
-        List<Integer> userIdList = userInfoService.userIdList();
-        if (CollectionUtils.isEmpty(userIdList)) {
+        List<Integer> idList = userInfoService.idList();
+        if (CollectionUtils.isEmpty(idList)) {
             return CommonResult.fail(HttpStatus.NOT_FOUND);
         }
         Map<String, List<UserAttendance>> attendanceMap = Maps.newHashMap();
-        userIdList.forEach(userId -> {
+        idList.forEach(id -> {
             List<UserAttendance> userNormalAttendanceList = new ArrayList<>();
-            String userName = userInfoService.getUserNameById(userId);
-            List<AttendanceDTO> userAllAttendanceList = attendanceService.findAttendanceByUserId(userId, start, end);
+            String userName = userInfoService.getUserNameById(id);
+            List<AttendanceDTO> userAllAttendanceList = attendanceService.findAttendanceByUserId(id, start, end);
             if (CollectionUtils.isEmpty(userAllAttendanceList)) {
                 return;
             }

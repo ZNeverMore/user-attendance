@@ -5,15 +5,15 @@
     </resultMap>
 
 
-    <select id="userIdList" resultType="java.lang.Integer">
-        SELECT userId
+    <select id="idList" resultType="java.lang.Integer">
+        SELECT id
         FROM userinfo_attendance
     </select>
 
     <select id="getUserNameById" resultType="string">
         SELECT userName
         FROM userinfo_attendance
-        WHERE userId = #{userId}
+        WHERE id = #{id}
     </select>
 
 </mapper>

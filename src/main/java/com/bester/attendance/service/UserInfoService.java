@@ -12,14 +12,14 @@ public interface UserInfoService {
      *
      * @return
      */
-    List<Integer> userIdList();
+    List<Integer> idList();
 
     /**
      * 根据用户ID查找用户名
      *
-     * @param userId
+     * @param id
      * @return
      */
-    String getUserNameById(Integer userId);
+    String getUserNameById(Integer id);
 
 }

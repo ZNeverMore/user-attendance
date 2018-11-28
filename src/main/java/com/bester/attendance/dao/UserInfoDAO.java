@@ -10,11 +10,11 @@ import java.util.List;
 public interface UserInfoDAO {
 
     /**
-     * 查找用户ID列表
+     * 查找ID列表
      *
      * @return
      */
-    List<Integer> userIdList();
+    List<Integer> idList();
 
     /**
      * 通过用户ID查找用户名
@@ -22,6 +22,6 @@ public interface UserInfoDAO {
      * @param userId
      * @return
      */
-    String getUserNameById(@Param("userId") Integer userId);
+    String getUserNameById(@Param("id") Integer userId);
 
 }
