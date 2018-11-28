@@ -12,4 +12,8 @@ public class UserInfo {
 
     private String userName;
 
+    private Integer departmentId;
+
+    private Integer userIdentity;
+
 }

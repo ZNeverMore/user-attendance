@@ -1,23 +1,32 @@
 package com.bester.attendance.controller;
 
 import com.bester.attendance.common.CommonResult;
-import com.bester.attendance.entity.Attendance;
+import com.bester.attendance.dto.AttendanceDTO;
 import com.bester.attendance.enums.HttpStatus;
 import com.bester.attendance.service.AttendanceService;
 import com.bester.attendance.service.UserInfoService;
 import com.google.common.collect.Maps;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * @author zhangqiang
+ */
 @RestController
 public class UserAttendanceController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserAttendanceController.class);
 
     @Resource
     private AttendanceService attendanceService;
@@ -31,8 +40,20 @@ public class UserAttendanceController {
     }
 
     @GetMapping("/user/attendance")
-    public CommonResult getAttendance() {
+    public CommonResult getAttendance(String start, String end) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        if (StringUtils.isBlank(start) || StringUtils.isBlank(end)) {
+            return CommonResult.fail(HttpStatus.PARAMETER_ERROR);
+        }
+        try {
+            Date startDate = simpleDateFormat.parse(start);
+            Date endDate = simpleDateFormat.parse(end);
+            if (endDate.before(startDate)) {
+                return CommonResult.fail(HttpStatus.PARAMETER_ERROR);
+            }
+        } catch (ParseException e) {
+            LOGGER.error("时间格式错误");
+        }
         List<Integer> userIdList = userInfoService.userIdList();
         if (CollectionUtils.isEmpty(userIdList)) {
             return CommonResult.fail(HttpStatus.NOT_FOUND);
@@ -41,15 +62,15 @@ public class UserAttendanceController {
         userIdList.forEach(userId -> {
             List<UserAttendance> userNormalAttendanceList = new ArrayList<>();
             String userName = userInfoService.getUserNameById(userId);
-            List<Attendance> userAllAttendanceList = attendanceService.findAttendanceByUserId(userId);
+            List<AttendanceDTO> userAllAttendanceList = attendanceService.findAttendanceByUserId(userId, start, end);
             if (CollectionUtils.isEmpty(userAllAttendanceList)) {
                 return;
             }
-            Map<String, List<Attendance>> userDayAttendanceMap = userAllAttendanceList.stream().collect(Collectors.groupingBy(Attendance::getDays));
-            for (Map.Entry<String, List<Attendance>> entry : userDayAttendanceMap.entrySet()) {
-                List<Attendance> userDayAttendanceList = entry.getValue();
+            Map<String, List<AttendanceDTO>> userDayAttendanceMap = userAllAttendanceList.stream().collect(Collectors.groupingBy(AttendanceDTO::getDays));
+            for (Map.Entry<String, List<AttendanceDTO>> entry : userDayAttendanceMap.entrySet()) {
+                List<AttendanceDTO> userDayAttendanceList = entry.getValue();
                 if (CollectionUtils.isEmpty(userDayAttendanceList) && userDayAttendanceList.size() < 2) {
-                    Attendance attendance = userDayAttendanceList.get(0);
+                    AttendanceDTO attendance = userDayAttendanceList.get(0);
                     UserAttendance userAttendance = new UserAttendance(simpleDateFormat.format(attendance.getAddTime()));
                     userNormalAttendanceList.add(userAttendance);
                 } else {

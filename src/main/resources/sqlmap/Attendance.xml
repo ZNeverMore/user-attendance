@@ -13,6 +13,8 @@
         SELECT a.userId, a.addTime, a.id, DATE_FORMAT(a.addTime,'%Y-%m-%d') days
         FROM user_attendance a
         WHERE a.userId = #{userId}
+        AND a.addTime &gt; #{start}
+        AND a.addTime &lt; #{end}
         GROUP BY days, a.addTime, a.id
     </select>
 
