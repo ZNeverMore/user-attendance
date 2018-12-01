@@ -2,12 +2,13 @@ package com.bester.attendance.controller;
 
 import com.bester.attendance.common.CommonResult;
 import com.bester.attendance.dto.AttendanceDTO;
+import com.bester.attendance.entity.UserAttendance;
 import com.bester.attendance.enums.HttpStatus;
 import com.bester.attendance.service.AttendanceService;
 import com.bester.attendance.service.UserInfoService;
+import com.bester.attendance.util.ExcelUtil;
 import com.google.common.collect.Maps;
-import lombok.Data;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
@@ -15,9 +16,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -40,9 +44,10 @@ public class UserAttendanceController {
     }
 
     @GetMapping("/user/attendance")
-    public CommonResult getAttendance(String start, String end) {
+    public CommonResult getAttendance(String start, String end, HttpServletResponse response){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        if (StringUtils.isBlank(start) || StringUtils.isBlank(end)) {
+        String regex = "^20[1-2]\\d-(0?[1-9]|1[0-2])-(0?[1-9]|[1-2][0-9]|3[0-1])\\s+([0-1]\\d|20|21|22|23):[0-5]\\d:[0-5]\\d$|^$";
+        if (!Pattern.matches(regex, start) || !Pattern.matches(regex, end)) {
             return CommonResult.fail(HttpStatus.PARAMETER_ERROR);
         }
         try {
@@ -83,20 +88,32 @@ public class UserAttendanceController {
             userNormalAttendanceList.sort(Comparator.comparing(UserAttendance::getFirstIn));
             attendanceMap.put(userName, userNormalAttendanceList);
         });
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        String startTime;
+        String endTime;
+        try {
+            startTime = dateFormat.parse(start).toString();
+            endTime = dateFormat.parse(end).toString();
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return CommonResult.fail(HttpStatus.PARAMETER_ERROR);
+        }
+        String fileName = startTime + "至" + endTime + "考勤表.xlsx";
+        XSSFWorkbook workbook = ExcelUtil.exportExcel(attendanceMap);
+        if (workbook == null) {
+            return CommonResult.fail(HttpStatus.PARAMETER_ERROR);
+        }
+        response.setContentType("application/octet-stream");
+        response.setHeader("Content-disposition", "attachment;filename=" + fileName);
+        try {
+            response.flushBuffer();
+            workbook.write(response.getOutputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return CommonResult.fail(HttpStatus.ERROR);
+        }
         return CommonResult.success(attendanceMap);
     }
 
-    @Data
-    private class UserAttendance {
-        UserAttendance(String firstIn) {
-            this.firstIn = firstIn;
-        }
-        UserAttendance(String firstIn, String lastOut) {
-            this.firstIn = firstIn;
-            this.lastOut = lastOut;
-        }
-        private String firstIn;
-        private String lastOut;
-    }
 
 }
