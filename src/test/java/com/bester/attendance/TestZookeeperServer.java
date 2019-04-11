@@ -47,7 +47,6 @@ public class TestZookeeperServer {
     private void register(String hostName) throws KeeperException, InterruptedException {
         String path = zooKeeper.create("/servers/server", hostName.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT_SEQUENTIAL);
         System.out.println(hostName + "is online;" + path);
-
     }
 
     private void business() throws InterruptedException {
